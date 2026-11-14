@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../shared/widgets/section_card.dart';
-import '../../chemistry/presentation/chemistry_home_page.dart';
+import '../../chemistry/presentation/chemistry_units_page.dart';
 
 class SubjectHomePage extends StatelessWidget {
   const SubjectHomePage({
@@ -17,6 +17,10 @@ class SubjectHomePage extends StatelessWidget {
     final isFirstYearChemistry =
         grade == 'الأول الثانوي' && subject == 'الكيمياء';
 
+    if (isFirstYearChemistry) {
+      return const ChemistryUnitsPage();
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text(subject)),
       body: ListView(
@@ -24,42 +28,37 @@ class SubjectHomePage extends StatelessWidget {
         children: [
           Text(grade, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          Text('ماذا تريد أن تفتح؟',
-              style: Theme.of(context).textTheme.headlineSmall),
+          Text(
+            'ماذا تريد أن تفتح؟',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           const SizedBox(height: 18),
           SectionCard(
             title: 'الكتاب المدرسي',
             subtitle: 'تصفح الكتاب والدروس وفق المنهج.',
             icon: Icons.menu_book_outlined,
-            onTap: () => _showInfo(context, 'سيُربط ملف الكتاب المدرسي في المرحلة التالية.'),
+            onTap: () => _showInfo(
+              context,
+              'سيُربط ملف الكتاب المدرسي في المرحلة التالية.',
+            ),
           ),
           SectionCard(
             title: 'المعمل الافتراضي',
             subtitle: 'اختر تجربة وتعرّف على أدواتها وخطواتها.',
             icon: Icons.science_outlined,
-            onTap: () {
-              if (isFirstYearChemistry) {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => const ChemistryHomePage(),
-                ));
-              } else {
-                _showInfo(context, 'سيُضاف المعمل لهذه المادة والصف لاحقاً.');
-              }
-            },
+            onTap: () => _showInfo(
+              context,
+              'سيُضاف المعمل لهذه المادة والصف لاحقاً.',
+            ),
           ),
           SectionCard(
             title: 'الدروس التفاعلية',
             subtitle: 'شرح مبسط وأنشطة وأسئلة قصيرة.',
             icon: Icons.school_outlined,
-            onTap: () {
-              if (isFirstYearChemistry) {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => const ChemistryHomePage(),
-                ));
-              } else {
-                _showInfo(context, 'ستُضاف الدروس التفاعلية لاحقاً.');
-              }
-            },
+            onTap: () => _showInfo(
+              context,
+              'ستُضاف الدروس التفاعلية لاحقاً.',
+            ),
           ),
         ],
       ),
