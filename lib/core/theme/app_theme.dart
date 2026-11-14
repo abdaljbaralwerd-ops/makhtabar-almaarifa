@@ -12,7 +12,7 @@ class AppTheme {
         backgroundColor: Color(0xFFF6F8F7),
         foregroundColor: Color(0xFF173D36),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         color: Colors.white,
         shape: RoundedRectangleBorder(
