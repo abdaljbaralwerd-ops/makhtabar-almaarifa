@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,11 +29,124 @@ jobs:
 
       - name: Generate Android platform files
         run: flutter create --platforms=android .
+
+      - name: Prepare release signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          set -e
+
+          mkdir -p android/app
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/key.jks
+
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          props = Path("android/key.properties")
+          props.write_text(
+              "storePassword=" + os.environ["STORE_PASSWORD"] + "\n" +
+              "keyPassword=" + os.environ["KEY_PASSWORD"] + "\n" +
+              "keyAlias=" + os.environ["KEY_ALIAS"] + "\n" +
+              "storeFile=key.jks\n"
+          )
+
+          gradle = Path("android/app/build.gradle.kts")
+          text = gradle.read_text()
+
+          old_id = 'applicationId = "com.example.makhtabar_almaarifa"'
+          if old_id not in text:
+              raise SystemExit("Could not find the expected applicationId in build.gradle.kts")
+
+          text = text.replace(
+              old_id,
+              'applicationId = "com.makhtabar.almaarifa"',
+              1
+          )
+
+          imports = "import java.io.FileInputStream\nimport java.util.Properties\n"
+          if "import java.util.Properties" not in text:
+              text = imports + text
+
+          marker = "plugins {"
+          start = text.find(marker)
+          if start == -1:
+              raise SystemExit("Could not find the Gradle plugins block")
+
+          depth = 0
+          end = -1
+          for i in range(start, len(text)):
+              if text[i] == "{":
+                  depth += 1
+              elif text[i] == "}":
+                  depth -= 1
+                  if depth == 0:
+                      end = i + 1
+                      break
+
+          if end == -1:
+              raise SystemExit("Could not read the Gradle plugins block")
+
+          setup = '''
+
+          val keystoreProperties = Properties()
+          val keystorePropertiesFile = rootProject.file("key.properties")
+          require(keystorePropertiesFile.exists()) {
+              "Release signing properties file is missing"
+          }
+          keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
+          '''
+
+          text = text[:end] + setup + text[end:]
+
+          build_marker = "buildTypes {"
+          build_start = text.find(build_marker)
+          if build_start == -1:
+              raise SystemExit("Could not find the release buildTypes block")
+
+          signing = '''
+              signingConfigs {
+                  create("release") {
+                      keyAlias = keystoreProperties["keyAlias"] as String
+                      keyPassword = keystoreProperties["keyPassword"] as String
+                      storeFile = file(keystoreProperties["storeFile"] as String)
+                      storePassword = keystoreProperties["storePassword"] as String
+                  }
+              }
+
+          '''
+
+          text = text[:build_start] + signing + text[build_start:]
+
+          debug_signing = 'signingConfig = signingConfigs.getByName("debug")'
+          if debug_signing not in text:
+              raise SystemExit("Could not find the default debug signing configuration")
+
+          text = text.replace(
+              debug_signing,
+              'signingConfig = signingConfigs.getByName("release")',
+              1
+          )
+
+          gradle.write_text(text)
+          print("Release signing configuration prepared successfully.")
+          PY
+
       - name: Build APK
         run: flutter build apk --release
+
+      - name: Verify APK signature
+        run: |
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -n 1)
+          "$APKSIGNER" verify --print-certs "$APK"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: makhtabar-almaarifa-apk
+          name: makhtabar-almaarifa-release
           path: build/app/outputs/flutter-apk/app-release.apk
