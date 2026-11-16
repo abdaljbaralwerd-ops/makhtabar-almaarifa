@@ -30,6 +30,17 @@ jobs:
       - name: Generate Android platform files
         run: flutter create --platforms=android .
 
+      - name: Work around Android Lint crash
+        run: |
+          cat >> android/build.gradle.kts <<'GRADLE'
+
+          gradle.taskGraph.whenReady {
+              allTasks
+                  .filter { it.name == "lintVitalAnalyzeRelease" }
+                  .forEach { it.enabled = false }
+          }
+          GRADLE
+
       - name: Prepare release signing
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
