@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/chemistry_unit.dart';
+import 'chemistry_book_page.dart';
 
 class ChemistryUnitPage extends StatelessWidget {
   const ChemistryUnitPage({
@@ -24,8 +25,18 @@ class ChemistryUnitPage extends StatelessWidget {
           _buildOption(
             context,
             'الكتاب المدرسي',
-            'دروس الوحدة وفق الكتاب المقرر.',
+            'اقرأ صفحات الوحدة وتصفحها وكبّر النصوص.',
             Icons.menu_book_outlined,
+            onTap: unit.id == 'unit_1'
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ChemistryBookPage(),
+                      ),
+                    );
+                  }
+                : null,
           ),
           _buildOption(
             context,
@@ -48,15 +59,18 @@ class ChemistryUnitPage extends StatelessWidget {
     BuildContext context,
     String title,
     String subtitle,
-    IconData icon,
-  ) {
+    IconData icon, {
+    VoidCallback? onTap,
+  }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
+        onTap: onTap,
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(child: Icon(icon)),
         title: Text(title),
         subtitle: Text(subtitle),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       ),
     );
   }
