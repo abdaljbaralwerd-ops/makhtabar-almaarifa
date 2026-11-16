@@ -2,11 +2,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:makhtabar_almaarifa/app.dart';
 
 void main() {
-  testWidgets('shows app title and grade choices', (tester) async {
+  testWidgets('opens directly on first grade subjects', (tester) async {
     await tester.pumpWidget(const KnowledgeLabApp());
-    expect(find.text('مختبر المعرفة'), findsOneWidget);
+
     expect(find.text('الأول الثانوي'), findsOneWidget);
-    expect(find.text('الثاني الثانوي'), findsOneWidget);
-    expect(find.text('الثالث الثانوي'), findsOneWidget);
+    expect(find.text('اختر المادة'), findsOneWidget);
+
+    expect(find.text('الفيزياء'), findsOneWidget);
+    expect(find.text('الكيمياء'), findsOneWidget);
+    expect(find.text('الأحياء'), findsOneWidget);
+    expect(find.text('الرياضيات'), findsOneWidget);
+
+    expect(find.text('الثاني الثانوي'), findsNothing);
+    expect(find.text('الثالث الثانوي'), findsNothing);
   });
 }
