@@ -1,13 +1,29 @@
-name: Build Android APK
+name: Build Android Apps
 
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
+      - feature/three-grade-apps
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - grade: grade_1
+            package_id: com.makhtabar.almaarifa.grade1
+            artifact: makhtabar-grade-1
+          - grade: grade_2
+            package_id: com.makhtabar.almaarifa.grade2
+            artifact: makhtabar-grade-2
+          - grade: grade_3
+            package_id: com.makhtabar.almaarifa.grade3
+            artifact: makhtabar-grade-3
 
     steps:
       - name: Checkout
@@ -47,6 +63,7 @@ jobs:
           STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          PACKAGE_ID: ${{ matrix.package_id }}
         run: |
           set -e
 
@@ -70,11 +87,11 @@ jobs:
 
           old_id = 'applicationId = "com.example.makhtabar_almaarifa"'
           if old_id not in text:
-              raise SystemExit("Could not find the expected applicationId in build.gradle.kts")
+              raise SystemExit("Could not find the expected applicationId")
 
           text = text.replace(
               old_id,
-              'applicationId = "com.makhtabar.almaarifa"',
+              'applicationId = "' + os.environ["PACKAGE_ID"] + '"',
               1
           )
 
@@ -114,8 +131,7 @@ jobs:
 
           text = text[:end] + setup + text[end:]
 
-          build_marker = "buildTypes {"
-          build_start = text.find(build_marker)
+          build_start = text.find("buildTypes {")
           if build_start == -1:
               raise SystemExit("Could not find the release buildTypes block")
 
@@ -148,7 +164,7 @@ jobs:
           PY
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --dart-define=APP_GRADE=${{ matrix.grade }}
 
       - name: Verify APK signature
         run: |
@@ -159,5 +175,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: makhtabar-almaarifa-release
+          name: ${{ matrix.artifact }}
           path: build/app/outputs/flutter-apk/app-release.apk
