@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
-import 'features/subjects/presentation/subjects_page.dart';
+import 'features/home/presentation/splash_page.dart';
 
 class KnowledgeLabApp extends StatelessWidget {
   const KnowledgeLabApp({super.key});
@@ -13,9 +13,9 @@ class KnowledgeLabApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       locale: const Locale('ar'),
-      home: Directionality(
+      home: const Directionality(
         textDirection: TextDirection.rtl,
-        child: SubjectsPage(grade: AppConfig.gradeName),
+        child: SplashPage(),
       ),
     );
   }
