@@ -164,16 +164,20 @@ jobs:
           PY
 
       - name: Build APK
-        run: flutter build apk --release --dart-define=APP_GRADE=${{ matrix.grade }}
+        run: flutter build apk --release --split-per-abi --dart-define=APP_GRADE=${{ matrix.grade }}
 
-      - name: Verify APK signature
+      - name: Verify APK signatures
         run: |
-          APK="build/app/outputs/flutter-apk/app-release.apk"
+          set -e
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -n 1)
-          "$APKSIGNER" verify --print-certs "$APK"
+          for APK in build/app/outputs/flutter-apk/*.apk; do
+            [ -f "$APK" ] || { echo "No APK files found"; exit 1; }
+            echo "Verifying $APK"
+            "$APKSIGNER" verify --print-certs "$APK"
+          done
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/*.apk
