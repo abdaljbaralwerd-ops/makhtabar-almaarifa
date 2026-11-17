@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/chemistry_unit.dart';
 import 'chemistry_book_page.dart';
+import 'phlogiston_lab_page.dart';
 
 class ChemistryUnitPage extends StatelessWidget {
   const ChemistryUnitPage({
@@ -43,6 +44,16 @@ class ChemistryUnitPage extends StatelessWidget {
             'المعمل الافتراضي',
             'تجارب وأنشطة علمية تفاعلية.',
             Icons.science_outlined,
+            onTap: unit.id == 'unit_1'
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const PhlogistonLabPage(),
+                      ),
+                    );
+                  }
+                : null,
           ),
           _buildOption(
             context,
