@@ -21,7 +21,10 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
   int _totalPages = 0;
   bool _isReady = false;
 
-  void _onViewerReady(PdfDocument document, PdfViewerController controller) {
+  void _onViewerReady(
+    PdfDocument document,
+    PdfViewerController controller,
+  ) {
     if (!mounted) return;
 
     setState(() {
@@ -33,15 +36,11 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
 
   void _onPageChanged(int? pageNumber) {
     if (!mounted || pageNumber == null) return;
-
-    setState(() {
-      _currentPage = pageNumber;
-    });
+    setState(() => _currentPage = pageNumber);
   }
 
   Future<void> _goToPage(int page) async {
     if (!_isReady || page < 1 || page > _totalPages) return;
-
     await _controller.goToPage(pageNumber: page);
   }
 
@@ -54,46 +53,44 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
 
     final selectedPage = await showDialog<int>(
       context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('الانتقال إلى صفحة'),
-          content: TextField(
-            controller: pageController,
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            decoration: InputDecoration(
-              hintText: 'رقم الصفحة',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              helperText: 'عدد صفحات الوحدة: $_totalPages',
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('الانتقال إلى صفحة'),
+        content: TextField(
+          controller: pageController,
+          keyboardType: TextInputType.number,
+          textAlign: TextAlign.center,
+          decoration: InputDecoration(
+            hintText: 'رقم الصفحة',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
+            helperText: 'عدد صفحات الوحدة: $_totalPages',
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('إلغاء'),
-            ),
-            FilledButton(
-              onPressed: () {
-                final page = int.tryParse(pageController.text.trim());
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('إلغاء'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final page = int.tryParse(pageController.text.trim());
 
-                if (page == null || page < 1 || page > _totalPages) {
-                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                    SnackBar(
-                      content: Text('أدخل رقمًا من 1 إلى $_totalPages'),
-                    ),
-                  );
-                  return;
-                }
+              if (page == null || page < 1 || page > _totalPages) {
+                ScaffoldMessenger.of(dialogContext).showSnackBar(
+                  SnackBar(
+                    content: Text('أدخل رقمًا من 1 إلى $_totalPages'),
+                  ),
+                );
+                return;
+              }
 
-                Navigator.pop(dialogContext, page);
-              },
-              child: const Text('انتقال'),
-            ),
-          ],
-        );
-      },
+              Navigator.pop(dialogContext, page);
+            },
+            child: const Text('انتقال'),
+          ),
+        ],
+      ),
     );
 
     pageController.dispose();
@@ -101,12 +98,6 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
     if (selectedPage != null) {
       await _goToPage(selectedPage);
     }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -142,9 +133,7 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircularProgressIndicator(
-                          color: primaryColor,
-                        ),
+                        CircularProgressIndicator(color: primaryColor),
                         SizedBox(height: 16),
                         Text('جارٍ تجهيز الكتاب...'),
                       ],
@@ -171,22 +160,78 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.menu_book_rounded,
-            color: primaryColor,
-          ),
+          const Icon(Icons.menu_book_rounded, color: primaryColor),
           const SizedBox(width: 8),
           const Expanded(
             child: Text(
               'علم الكيمياء وتطوره',
               style: TextStyle(
-                fontWeight: FontWeight.w600
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF173D36),
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          IconButton(
+            tooltip: 'الانتقال إلى صفحة',
+            onPressed: _isReady ? _showPagePicker : null,
+            icon: const Icon(
+              Icons.find_in_page_outlined,
+              color: primaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-
-
-
-
-
-q
-
-q
+  Widget _buildPageNavigation() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(color: Color(0xFFE5ECE9)),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton.filledTonal(
+            tooltip: 'الصفحة السابقة',
+            onPressed: _isReady && _currentPage > 1
+                ? () => _goToPage(_currentPage - 1)
+                : null,
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          ),
+          InkWell(
+            onTap: _showPagePicker,
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 10,
+              ),
+              child: Text(
+                _isReady
+                    ? 'صفحة $_currentPage من $_totalPages'
+                    : 'جارٍ تحميل الصفحات',
+                style: const TextStyle(
+                  color: primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          IconButton.filledTonal(
+            tooltip: 'الصفحة التالية',
+            onPressed: _isReady && _currentPage < _totalPages
+                ? () => _goToPage(_currentPage + 1)
+                : null,
+            icon: const Icon(Icons.arrow_forward_ios_rounded),
+          ),
+        ],
+      ),
+    );
+  }
+}
