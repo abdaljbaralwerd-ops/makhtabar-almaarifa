@@ -44,6 +44,46 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
     await _controller.goToPage(pageNumber: page);
   }
 
+  void _showInteractiveMenu() {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'استكشف محتوى الصفحة',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.menu_book_outlined),
+                title: const Text('شرح الفكرة'),
+                subtitle: const Text('شرح مبسط لمحتوى الدرس'),
+                onTap: () => Navigator.pop(context),
+              ),
+              ListTile(
+                leading: const Icon(Icons.lightbulb_outline),
+                title: const Text('مثال وتوضيح'),
+                onTap: () => Navigator.pop(context),
+              ),
+              ListTile(
+                leading: const Icon(Icons.science_outlined),
+                title: const Text('استكشاف ومحاكاة'),
+                onTap: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _showPagePicker() async {
     if (!_isReady) return;
 
@@ -126,6 +166,59 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
                     backgroundColor: backgroundColor,
                     onViewerReady: _onViewerReady,
                     onPageChanged: _onPageChanged,
+                    pageOverlaysBuilder: (context, pageRect, page) {
+                      if (page.pageNumber != 11) return [];
+
+                      return [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: PdfOverlayInteractionRegion(
+                              onTap: (details) {
+                                _showInteractiveMenu();
+                                return true;
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: primaryColor,
+                                  borderRadius: BorderRadius.circular(24),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.touch_app_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                    SizedBox(width: 6),
+                                    Text(
+                                      'استكشف الصفحة',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ];
+                    },
                   ),
                 ),
                 if (!_isReady)
