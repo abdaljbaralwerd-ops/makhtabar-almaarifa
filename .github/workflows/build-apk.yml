@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     strategy:
       fail-fast: false
@@ -181,3 +183,14 @@ jobs:
         with:
           name: ${{ matrix.artifact }}
           path: build/app/outputs/flutter-apk/*.apk
+
+      - name: Publish Grade 1 APK
+        if: matrix.grade == 'grade_1'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: grade-1-latest
+          name: مختبر المعرفة - الصف الأول الثانوي
+          files: build/app/outputs/flutter-apk/*.apk
+          overwrite_files: true
+          make_latest: false
+          fail_on_unmatched_files: true
