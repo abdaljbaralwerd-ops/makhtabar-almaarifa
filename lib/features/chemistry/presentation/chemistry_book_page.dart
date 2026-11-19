@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:pdfrx/pdfrx.dart';
 
 class ChemistryBookPage extends StatefulWidget {
-  const ChemistryBookPage({super.key});
+  const ChemistryBookPage({
+    super.key,
+    this.bookAsset = unit1BookAsset,
+    this.bookTitle = unit1BookTitle,
+  });
 
-  static const String bookAsset =
+  static const String unit1BookAsset =
       'assets/books/chemistry_unit_01.pdf';
+  static const String unit1BookTitle = 'علم الكيمياء وتطوره';
+
+  final String bookAsset;
+  final String bookTitle;
 
   @override
   State<ChemistryBookPage> createState() => _ChemistryBookPageState();
@@ -42,46 +50,6 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
   Future<void> _goToPage(int page) async {
     if (!_isReady || page < 1 || page > _totalPages) return;
     await _controller.goToPage(pageNumber: page);
-  }
-
-  void _showInteractiveMenu() {
-    showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'استكشف محتوى الصفحة',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              ListTile(
-                leading: const Icon(Icons.menu_book_outlined),
-                title: const Text('شرح الفكرة'),
-                subtitle: const Text('شرح مبسط لمحتوى الدرس'),
-                onTap: () => Navigator.pop(context),
-              ),
-              ListTile(
-                leading: const Icon(Icons.lightbulb_outline),
-                title: const Text('مثال وتوضيح'),
-                onTap: () => Navigator.pop(context),
-              ),
-              ListTile(
-                leading: const Icon(Icons.science_outlined),
-                title: const Text('استكشاف ومحاكاة'),
-                onTap: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Future<void> _showPagePicker() async {
@@ -160,65 +128,13 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
             child: Stack(
               children: [
                 PdfViewer.asset(
-                  ChemistryBookPage.bookAsset,
+                  widget.bookAsset,
                   controller: _controller,
                   params: PdfViewerParams(
                     backgroundColor: backgroundColor,
                     onViewerReady: _onViewerReady,
                     onPageChanged: _onPageChanged,
-                    pageOverlaysBuilder: (context, pageRect, page) {
-                      if (page.pageNumber != 11) return [];
 
-                      return [
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: PdfOverlayInteractionRegion(
-                              onTap: (details) {
-                                _showInteractiveMenu();
-                                return true;
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: primaryColor,
-                                  borderRadius: BorderRadius.circular(24),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 6,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: const Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.touch_app_rounded,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      'استكشف الصفحة',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ];
-                    },
                   ),
                 ),
                 if (!_isReady)
@@ -255,9 +171,9 @@ class _ChemistryBookPageState extends State<ChemistryBookPage> {
         children: [
           const Icon(Icons.menu_book_rounded, color: primaryColor),
           const SizedBox(width: 8),
-          const Expanded(
+          Expanded(
             child: Text(
-              'علم الكيمياء وتطوره',
+              widget.bookTitle,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF173D36),

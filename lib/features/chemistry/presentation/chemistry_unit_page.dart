@@ -28,12 +28,17 @@ class ChemistryUnitPage extends StatelessWidget {
             'الكتاب المدرسي',
             'اقرأ صفحات الوحدة وتصفحها وكبّر النصوص.',
             Icons.menu_book_outlined,
-            onTap: unit.id == 'unit_1'
+            onTap: unit.id == 'unit_1' || unit.id == 'unit_2'
                 ? () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const ChemistryBookPage(),
+                        builder: (_) => unit.id == 'unit_2'
+                            ? const ChemistryBookPage(
+                                bookAsset: 'assets/books/chemistry_unit_02.pdf',
+                                bookTitle: 'نظرة تاريخية عن تطور مفهوم الذرة',
+                              )
+                            : const ChemistryBookPage(),
                       ),
                     );
                   }
