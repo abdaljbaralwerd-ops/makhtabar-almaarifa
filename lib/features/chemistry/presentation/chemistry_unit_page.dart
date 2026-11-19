@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../data/chemistry_unit.dart';
 import 'chemistry_book_page.dart';
 import 'phlogiston_lab_page.dart';
+import '../labs/static_electricity/static_electricity_lab.dart';
+import '../labs/cathode_rays/cathode_rays_lab.dart';
 
 class ChemistryUnitPage extends StatelessWidget {
   const ChemistryUnitPage({
@@ -49,17 +51,34 @@ class ChemistryUnitPage extends StatelessWidget {
             'المعمل الافتراضي',
             'تجارب وأنشطة علمية تفاعلية.',
             Icons.science_outlined,
-            onTap: unit.id == 'unit_1'
+            onTap: unit.id == 'unit_1' || unit.id == 'unit_2'
                 ? () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const PhlogistonLabPage(),
+                        builder: (_) => unit.id == 'unit_2'
+                            ? const StaticElectricityLab()
+                            : const PhlogistonLabPage(),
                       ),
                     );
                   }
                 : null,
           ),
+          if (unit.id == 'unit_2')
+            _buildOption(
+              context,
+              'مختبر الأشعة المهبطية',
+              'محاكاة أنبوبة التفريغ وملاحظة مسار الأشعة.',
+              Icons.bolt,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const CathodeRaysLab(),
+                  ),
+                );
+              },
+            ),
           _buildOption(
             context,
             'الدروس التفاعلية والتقويم',
