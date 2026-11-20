@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
 import 'splash_screen.dart';
-import 'features/subjects/presentation/subjects_page.dart';
+import 'nebras/features/home/nebras_home_page.dart';
 
 class KnowledgeLabApp extends StatelessWidget {
   const KnowledgeLabApp({super.key});
@@ -22,10 +21,8 @@ class KnowledgeLabApp extends StatelessWidget {
             child: SplashScreen(
               onFinished: () {
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (_) => SubjectsPage(
-                      grade: AppConfig.gradeName,
-                    ),
+                  MaterialPageRoute<void>(
+                    builder: (_) => const NebrasHomePage(),
                   ),
                 );
               },
