@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../shared/widgets/section_card.dart';
-import '../../chemistry/presentation/chemistry_units_page.dart';
+import '../../../nebras/features/chemistry/presentation/book_reader_screen.dart';
 
 class SubjectHomePage extends StatelessWidget {
   const SubjectHomePage({
@@ -18,7 +18,7 @@ class SubjectHomePage extends StatelessWidget {
         grade == 'الأول الثانوي' && subject == 'الكيمياء';
 
     if (isFirstYearChemistry) {
-      return const ChemistryUnitsPage();
+      return const BookReaderScreen();
     }
 
     return Scaffold(
