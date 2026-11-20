@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+
 import '../data/chemistry_unit.dart';
-import 'chemistry_book_page.dart';
 import 'phlogiston_lab_page.dart';
 import '../labs/static_electricity/static_electricity_lab.dart';
 import '../labs/cathode_rays/cathode_rays_lab.dart';
@@ -25,27 +25,6 @@ class ChemistryUnitPage extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 20),
-          _buildOption(
-            context,
-            'الكتاب المدرسي',
-            'اقرأ صفحات الوحدة وتصفحها وكبّر النصوص.',
-            Icons.menu_book_outlined,
-            onTap: unit.id == 'unit_1' || unit.id == 'unit_2'
-                ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => unit.id == 'unit_2'
-                            ? const ChemistryBookPage(
-                                bookAsset: 'assets/books/chemistry_unit_02.pdf',
-                                bookTitle: 'نظرة تاريخية عن تطور مفهوم الذرة',
-                              )
-                            : const ChemistryBookPage(),
-                      ),
-                    );
-                  }
-                : null,
-          ),
           _buildOption(
             context,
             'المعمل الافتراضي',

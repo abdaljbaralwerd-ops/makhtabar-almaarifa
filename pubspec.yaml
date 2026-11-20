@@ -1,5 +1,5 @@
 name: makhtabar_almaarifa
-description: تطبيق مختبر المعرفة التعليمي لطلاب المرحلة الثانوية.
+description: تطبيق نِبراس التعليمي لطلاب الصف الأول الثانوي.
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  pdfrx: ^2.12.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -17,5 +17,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-     - assets/books/
