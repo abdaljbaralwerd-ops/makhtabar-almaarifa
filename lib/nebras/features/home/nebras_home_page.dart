@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
+
 import '../../../core/config/app_config.dart';
 import '../../../core/theme/app_theme.dart';
+import '../subjects/nebras_subjects_page.dart';
 
 class NebrasHomePage extends StatelessWidget {
   const NebrasHomePage({super.key});
@@ -13,6 +16,7 @@ class NebrasHomePage extends StatelessWidget {
           'نِبراس',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
         actions: [
           IconButton(
             onPressed: () {},
@@ -89,24 +93,35 @@ class NebrasHomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
+
               _HomeCard(
                 icon: Icons.menu_book_rounded,
                 title: 'المواد الدراسية',
-                description: 'تصفح المواد والمقررات المدرسية',
+                description: 'تصفح مواد الصف الأول الثانوي',
                 color: AppTheme.primary,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const NebrasSubjectsPage(),
+                    ),
+                  );
+                },
               ),
+
               _HomeCard(
                 icon: Icons.lightbulb_outline_rounded,
                 title: 'الدروس والشروحات',
                 description: 'تعلم وافهم المفاهيم خطوة بخطوة',
                 color: const Color(0xFFB88632),
               ),
+
               _HomeCard(
                 icon: Icons.science_outlined,
                 title: 'المعامل الافتراضية',
                 description: 'اكتشف وجرب وتعلم بالتفاعل والمحاكاة',
                 color: const Color(0xFF3975A5),
               ),
+
               const SizedBox(height: 28),
               const Center(
                 child: Text(
@@ -141,61 +156,92 @@ class _HomeCard extends StatelessWidget {
   final String title;
   final String description;
   final Color color;
+  final VoidCallback? onTap;
 
   const _HomeCard({
     required this.icon,
     required this.title,
     required this.description,
     required this.color,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE5EAE5)),
+        border: Border.all(
+          color: const Color(0xFFE5EAE5),
+        ),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 54,
-            height: 54,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Icon(icon, color: color, size: 29),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(18),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Row(
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textDark,
+                Container(
+                  width: 54,
+                  height: 54,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 29,
                   ),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textDark,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        description,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+                const Icon(
+                  Icons.chevron_left_rounded,
+                  color: Colors.black45,
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
 }
+
+
+
+
+
+
+
+
+  
