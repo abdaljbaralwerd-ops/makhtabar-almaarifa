@@ -1,23 +1,38 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  static const Color primary = Color(0xFF075B50);
+  static const Color secondary = Color(0xFFD6A84B);
+  static const Color background = Color(0xFFF5F7F4);
+  static const Color surface = Colors.white;
+  static const Color textDark = Color(0xFF183B35);
+
   static ThemeData get light {
-    const seed = Color(0xFF176B5B);
+    const colorScheme = ColorScheme.light(
+      primary: primary,
+      secondary: secondary,
+      surface: surface,
+      onPrimary: Colors.white,
+      onSecondary: textDark,
+      onSurface: textDark,
+    );
+
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(seedColor: seed),
-      scaffoldBackgroundColor: const Color(0xFFF6F8F7),
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: background,
+      fontFamily: 'Cairo',
       appBarTheme: const AppBarTheme(
         centerTitle: true,
-        backgroundColor: Color(0xFFF6F8F7),
-        foregroundColor: Color(0xFF173D36),
+        backgroundColor: background,
+        foregroundColor: primary,
+        elevation: 0,
       ),
       cardTheme: CardThemeData(
-        elevation: 0,
-        color: Colors.white,
+        color: surface,
+        elevation: 1,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
-          side: const BorderSide(color: Color(0xFFE5ECE9)),
         ),
       ),
     );
