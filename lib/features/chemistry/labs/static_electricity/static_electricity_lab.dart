@@ -146,7 +146,7 @@ class _StaticElectricityLabState extends State<StaticElectricityLab> {
     if (!_isRubbed) {
       message = 'ابدأ التجربة بدلك ساق المطاط بقطعة الصوف أو الحرير.';
     } else if (_isNearBalloons) {
-      message = 'لاحظ انجذاب البالونين نحو الساق بعد الدلك بقطعة ' + (_rubbingMaterial == \"silk\" ? \"الحرير.\" : \"الصوف.\");
+      message = 'لاحظ انجذاب البالونين نحو الساق بعد الدلك بقطعة ${_rubbingMaterial == "silk" ? "الحرير." : "الصوف."}';
     } else {
       message = 'قرّب ساق المطاط بعد دلكها بقطعة ${_rubbingMaterial == "silk" ? "الحرير" : "الصوف"} من البالونين.';
     }
